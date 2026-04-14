@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Rules Wordle</title>
+    <style>
+        :root {
+            --bg: #182018;
+            --panel: rgba(31, 42, 31, 0.88);
+            --panel-2: rgba(58, 74, 58, 0.9);
+            --text: #f5f1e8;
+            --muted: #d8cfbf;
+            --empty: #425142;
+            --miss: #4c534c;
+            --close: #bca14f;
+            --hit: #5f8f5f;
+            --key: #d7d0c0;
+            --key-text: #1b1b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--text);
+            background:
+                linear-gradient(rgba(11, 17, 11, 0.6), rgba(11, 17, 11, 0.85)),
+                url("images/Background New Rules.jpg") center/cover no-repeat fixed;
+        }
+
+        .page {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 14px 14px 18px;
+        }
+
+        .hero {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 14px 18px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        .hero h1 {
+            margin: 0 0 4px;
+            font-size: clamp(1.7rem, 4vw, 2.7rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 62ch;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .hero a {
+            color: #f3deb0;
+        }
+
+        .game-shell {
+            display: grid;
+            grid-template-columns: minmax(480px, 1fr) minmax(220px, 280px);
+            gap: 12px;
+            margin-top: 14px;
+            align-items: start;
+            max-width: 780px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+            min-width: 0;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .status {
+            min-height: 1.2em;
+            margin: 0 0 10px;
+            color: #f3deb0;
+            font-weight: bold;
+            letter-spacing: 0.03em;
+            font-size: 0.9rem;
+        }
+
+        .board {
+            display: grid;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(38px, 1fr));
+            gap: 5px;
+        }
+
+        .tile {
+            aspect-ratio: 1 / 1;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            display: grid;
+            place-items: center;
+            font-size: clamp(0.95rem, 2vw, 1.2rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .tile.filled {
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
+        .tile.miss {
+            background: var(--miss);
+            border-color: var(--miss);
+        }
+
+        .tile.close {
+            background: var(--close);
+            border-color: var(--close);
+            color: #201a0d;
+        }
+
+        .tile.hit {
+            background: var(--hit);
+            border-color: var(--hit);
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .controls input {
+            flex: 1;
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.92rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .controls button,
+        .actions button {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.84rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f3deb0;
+            color: #1a1a1a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .keyboard {
+            display: grid;
+            gap: 5px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .key {
+            min-width: 0;
+            flex: 1 1 0;
+            padding: 8px 4px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--key);
+            color: var(--key-text);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.76rem;
+        }
+
+        .key.wide {
+            flex: 1.8 1 0;
+        }
+
+        .key.miss {
+            background: var(--miss);
+            color: var(--text);
+        }
+
+        .key.close {
+            background: var(--close);
+        }
+
+        .key.hit {
+            background: var(--hit);
+            color: var(--text);
+        }
+
+        .legend {
+            margin: 10px 0 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 980px) {
+            .game-shell {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 820px) {
+
+            .page {
+                padding: 10px 10px 14px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls button,
+            .actions button {
+                width: 100%;
+            }
+
+            .key {
+                min-width: 30px;
+                padding: 7px 4px;
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <h1>New Rules Wordle</h1>
+            <p>Guess a five-letter word pulled from New Rules song titles. You get six tries, classic Wordle-style. Use your keyboard or tap the on-screen keys. <a href="scratch(index).html">Back to the New Rules page</a>.</p>
+        </section>
+
+        <section class="game-shell">
+            <div class="card">
+                <h2>Play</h2>
+                <p class="status" id="status">Type a five-letter guess to start.</p>
+
+                <div class="controls">
+                    <input id="guess-input" type="text" maxlength="5" placeholder="Guess here" aria-label="Enter a five-letter guess">
+                    <button id="submit-guess" type="button">Submit</button>
+                </div>
+
+                <div class="actions">
+                    <button id="new-game" type="button">New Song Word</button>
+                </div>
+
+                <div class="board" id="board" aria-live="polite"></div>
+
+                <div class="keyboard" id="keyboard"></div>
+            </div>
+
+            <aside class="card">
+                <h2>How It Works</h2>
+                <p>Each round picks a five-letter word inspired by a New Rules song title. You have six tries to figure it out.</p>
+
+                <ul class="legend">
+                    <li>Green means the letter is in the right spot.</li>
+                    <li>Gold means the letter is in the word, but in a different spot.</li>
+                    <li>Gray means the letter is not in the word.</li>
+                </ul>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        const words = ["ALONE", "DANCE", "EMILY", "GHOST", "HAPPY", "HEART", "HOURS", "PASTA", "WORRY"];
+        const maxRows = 6;
+        const wordLength = 5;
+        const keyboardLayout = [
+            ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+            ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+            ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACK"]
+        ];
+
+        const board = document.getElementById("board");
+        const keyboard = document.getElementById("keyboard");
+        const statusText = document.getElementById("status");
+        const guessInput = document.getElementById("guess-input");
+        const submitButton = document.getElementById("submit-guess");
+        const newGameButton = document.getElementById("new-game");
+
+        let answer = "";
+        let guesses = [];
+        let currentGuess = "";
+        let gameOver = false;
+        let keyStates = {};
+
+        function pickWord() {
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
+        function resetGame() {
+            answer = pickWord();
+            guesses = [];
+            currentGuess = "";
+            gameOver = false;
+            keyStates = {};
+            guessInput.value = "";
+            statusText.textContent = "Type a five-letter guess to start.";
+            drawBoard();
+            drawKeyboard();
+            guessInput.focus();
+        }
+
+        function drawBoard() {
+            board.innerHTML = "";
+
+            for (let rowIndex = 0; rowIndex < maxRows; rowIndex += 1) {
+                const row = document.createElement("div");
+                row.className = "row";
+
+                const guess = guesses[rowIndex] || (rowIndex === guesses.length ? currentGuess : "");
+                const evaluation = guesses[rowIndex] ? evaluateGuess(guesses[rowIndex], answer) : [];
+
+                for (let colIndex = 0; colIndex < wordLength; colIndex += 1) {
+                    const tile = document.createElement("div");
+                    const letter = guess[colIndex] || "";
+                    tile.className = "tile";
+                    if (letter) {
+                        tile.classList.add("filled");
+                    }
+                    if (evaluation[colIndex]) {
+                        tile.classList.add(evaluation[colIndex]);
+                    }
+                    tile.textContent = letter;
+                    row.appendChild(tile);
+                }
+
+                board.appendChild(row);
+            }
+        }
+
+        function drawKeyboard() {
+            keyboard.innerHTML = "";
+
+            keyboardLayout.forEach((rowLetters) => {
+                const row = document.createElement("div");
+                row.className = "keyboard-row";
+
+                rowLetters.forEach((letter) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "key";
+                    if (letter === "ENTER" || letter === "BACK") {
+                        button.classList.add("wide");
+                    }
+                    if (keyStates[letter]) {
+                        button.classList.add(keyStates[letter]);
+                    }
+                    button.textContent = letter === "BACK" ? "Back" : letter;
+                    button.addEventListener("click", () => handleKey(letter));
+                    row.appendChild(button);
+                });
+
+                keyboard.appendChild(row);
+            });
+        }
+
+        function evaluateGuess(guess, target) {
+            const result = Array(wordLength).fill("miss");
+            const targetLetters = target.split("");
+            const guessLetters = guess.split("");
+
+            for (let i = 0; i < wordLength; i += 1) {
+                if (guessLetters[i] === targetLetters[i]) {
+                    result[i] = "hit";
+                    targetLetters[i] = null;
+                    guessLetters[i] = null;
+                }
+            }
+
+            for (let i = 0; i < wordLength; i += 1) {
+                if (!guessLetters[i]) {
+                    continue;
+                }
+
+                const matchIndex = targetLetters.indexOf(guessLetters[i]);
+                if (matchIndex !== -1) {
+                    result[i] = "close";
+                    targetLetters[matchIndex] = null;
+                }
+            }
+
+            return result;
+        }
+
+        function updateKeyStates(guess) {
+            const score = evaluateGuess(guess, answer);
+            const priority = { miss: 1, close: 2, hit: 3 };
+
+            guess.split("").forEach((letter, index) => {
+                const nextState = score[index];
+                const currentState = keyStates[letter];
+                if (!currentState || priority[nextState] > priority[currentState]) {
+                    keyStates[letter] = nextState;
+                }
+            });
+        }
+
+        function submitGuess() {
+            if (gameOver) {
+                return;
+            }
+
+            const guess = currentGuess.trim().toUpperCase();
+
+            if (guess.length !== wordLength) {
+                statusText.textContent = "Each guess needs exactly five letters.";
+                return;
+            }
+
+            if (!words.includes(guess)) {
+                statusText.textContent = "Pick one of the New Rules song words from the list.";
+                return;
+            }
+
+            guesses.push(guess);
+            updateKeyStates(guess);
+            currentGuess = "";
+            guessInput.value = "";
+
+            if (guess === answer) {
+                gameOver = true;
+                statusText.textContent = "You got it! The song word was " + answer + ".";
+            } else if (guesses.length === maxRows) {
+                gameOver = true;
+                statusText.textContent = "Out of guesses. The word was " + answer + ".";
+            } else {
+                statusText.textContent = "Keep going. " + (maxRows - guesses.length) + " guess(es) left.";
+            }
+
+            drawBoard();
+            drawKeyboard();
+        }
+
+        function handleKey(key) {
+            if (gameOver) {
+                return;
+            }
+
+            if (key === "ENTER") {
+                submitGuess();
+                return;
+            }
+
+            if (key === "BACK") {
+                currentGuess = currentGuess.slice(0, -1);
+                guessInput.value = currentGuess;
+                drawBoard();
+                return;
+            }
+
+            if (currentGuess.length < wordLength) {
+                currentGuess += key;
+                guessInput.value = currentGuess;
+                drawBoard();
+            }
+        }
+
+        guessInput.addEventListener("input", (event) => {
+            currentGuess = event.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, wordLength);
+            event.target.value = currentGuess;
+            drawBoard();
+        });
+
+        guessInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitGuess();
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.target === guessInput) {
+                return;
+            }
+
+            const key = event.key.toUpperCase();
+            if (key === "ENTER") {
+                handleKey("ENTER");
+            } else if (key === "BACKSPACE") {
+                handleKey("BACK");
+            } else if (/^[A-Z]$/.test(key)) {
+                handleKey(key);
+            }
+        });
+
+        submitButton.addEventListener("click", submitGuess);
+        newGameButton.addEventListener("click", resetGame);
+
+        resetGame();
+    </script>
+</body>
+</html>

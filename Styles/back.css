@@ -1,0 +1,14 @@
+.Header {
+    background-image: url(../images/Background\ New\ Rules.jpg);
+    background-size: cover;
+    background-repeat: no repeat;
+    background-position: center;
+}
+
+.sidebar {
+    background-color: rgb(87, 99, 71);
+}
+
+.main-content {
+    background-color: rgb(70, 70, 70);
+}

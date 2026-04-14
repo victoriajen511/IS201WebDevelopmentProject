@@ -1,0 +1,52 @@
+
+
+.main-content {
+    color: rgb(255, 255, 255);
+}
+
+h1 {
+    color: rgb(255, 255, 255);
+}
+
+.Header h1 {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 0 6px 0;
+    background-color: rgba(87, 99, 71, 0.9);
+    border-radius: 999px;
+}
+
+a{
+    color: #ffffff;
+}
+
+.Header a {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 6px 6px 0 0;
+    background-color: rgba(87, 99, 71, 0.9);
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+.Header a:hover {
+    background-color: rgba(112, 128, 92, 0.95);
+}
+
+.sidebar{
+    color:rgb(255, 255, 255)
+}
+
+h2{
+    color: black;
+}
+
+h5,
+h6,h3 {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 0 8px 0;
+    background-color: rgba(87, 99, 71, 0.9);
+    border-radius: 999px;
+    color: rgb(255, 255, 255);
+}

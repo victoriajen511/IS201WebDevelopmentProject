@@ -1,0 +1,44 @@
+.Header {
+   padding: 20px;
+}
+
+.layout{
+    display: flex;
+}
+
+.sidebar{
+    width: 200px;
+  padding: 15px;
+}
+
+.main-content{
+    flex: 1;
+    padding: 20px;
+}
+
+.band-members{
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.member {
+  text-align: center;
+  width: 220px;
+}
+
+.center-image{
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 4px solid white;
+}
+
+.centered-embed {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: 4px solid rgba(87, 99, 71, 0.9);
+}

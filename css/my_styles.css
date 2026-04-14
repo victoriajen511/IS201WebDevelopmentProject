@@ -1,0 +1,19 @@
+.bg-primary{
+    background-color: lightpink !important;
+}
+
+.text-primary{
+    color: lightpink !important;
+}
+
+.subheading a {
+    color: lightpink !important;
+}
+
+.text-warning{
+    color: lightpink !important;
+}
+
+.social-icons .social-icon:hover {
+    background-color: lightpink !important;
+}
